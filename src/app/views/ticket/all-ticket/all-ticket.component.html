@@ -1,0 +1,134 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Tickets
+        </div>
+        <div class="card-body">
+          <div class="form-search">
+            <form class="form-inline my-2 my-lg-0">
+              <select name="select1" class="form-control mr-sm-2" (change)="onChangeSelect($event)">
+                <option value="" disabled>Please select</option>
+                <option value="ticketName" [attr.selected]="filter == 'ticketName'">Ticket Name</option>
+                <option value="reporter" [attr.selected]="filter == 'reporter'">Reporter</option>
+                <option value="createDate" [attr.selected]="filter == 'createDate'">Create Date</option>
+                <option value="status" [attr.selected]="filter == 'status'">Status</option>
+              </select>
+              <input *ngIf="filter == 'createDate'" class="form-control" id="date-input" type="date" name="date-input" placeholder="date" (change)="onChangeInput($event)" [value]="filterValue">
+              <input *ngIf="filter == '' || filter == 'ticketName' || filter == 'reporter'" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (change)="onChangeInput($event)" [value]="filterValue">
+              <select *ngIf="filter == 'status'" name="select1" class="form-control mr-sm-2" (change)="onChangeSelect($event)">
+                <option value="0" *ngFor="let item of statusArr">{{item}}</option>
+              </select>
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="onSearch()">Search</button>&nbsp;
+              <button class="btn btn-outline-danger my-2 my-sm-0" type="button" (click)="onClear()">Clear</button>
+            </form>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" (click)="openModal(template, 'add', 0)">Add New</button>
+          </div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th *ngFor="let column of columnData">{{column}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of listDataFilter2[this.currentPage - 1]">
+              <td>{{item.ticketId}}</td>
+              <td>{{item.ticketName}}</td>
+              <td>{{item.reporter}}</td>
+              <td>{{item.createDate}}</td>
+              <td>
+                <span class="badge badge-success" *ngIf="item.status == 'open'">{{item.status}}</span>
+                <span class="badge badge-warning" *ngIf="item.status == 'on-going'">{{item.status}}</span>
+                <span class="badge badge-danger" *ngIf="item.status == 'reject'">{{item.status}}</span>
+              </td>
+              <td>
+                {{item.activity}}
+                <button type="button" class="btn btn-ghost-danger" *ngIf="item.status == 'reject'"
+                      popover="Please provide full description, and we will process your ticket"
+                      popoverTitle="Info"
+                      triggers="focus">
+                  <i class="fa fa-info-circle fa-lg"></i>
+                </button>
+              </td>
+              <td>
+                {{item.productStream}}
+              </td>
+              <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" (click)="openModal(template, 'edit', item.ticketId)">
+                  Proses
+                </button>
+              </td>
+            </tr>
+<!--            <tr>-->
+<!--              <td>Avram Tarasios</td>-->
+<!--              <td>2012/02/01</td>-->
+<!--              <td>Staff</td>-->
+<!--              <td>-->
+<!--                <span class="badge badge-danger">Banned</span>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--              <td>Quintin Ed</td>-->
+<!--              <td>2012/02/01</td>-->
+<!--              <td>Admin</td>-->
+<!--              <td>-->
+<!--                <span class="badge badge-secondary">Inactive</span>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--              <td>Enéas Kwadwo</td>-->
+<!--              <td>2012/03/01</td>-->
+<!--              <td>Member</td>-->
+<!--              <td>-->
+<!--                <span class="badge badge-warning">Pending</span>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--              <td>Agapetus Tadeáš</td>-->
+<!--              <td>2012/01/21</td>-->
+<!--              <td>Staff</td>-->
+<!--              <td>-->
+<!--                <span class="badge badge-success">Active</span>-->
+<!--              </td>-->
+<!--            </tr>-->
+            </tbody>
+          </table>
+          <pagination [totalItems]="totalItems" [(ngModel)]="currentPage" (pageChanged)="pageChanged($event)"></pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #template>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Modal</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Ticket Name</label>
+        <input [value]="modalTicketInput" type="text" class="form-control" placeholder="Enter your ticket name" (change)="onChangeInputTicket($event)">
+      </div>
+      <div class="form-group">
+        <label>Product Stream</label>
+        <select  name="select1" class="form-control mr-sm-2" (change)="onChangeSelectStream($event)" [value]="modalStreamInput">
+          <option value="" hidden selected *ngIf="modalStreamInput == ''">Select product name</option>
+          <option [value]="modalStreamInput" hidden selected *ngIf="modalStreamInput !== ''">{{modalStreamInput}}</option>
+          <option [value]="item" *ngFor="let item of productArr">{{item}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label >Description</label>
+        <textarea id="textarea-input" name="textarea-input" rows="4" class="form-control" placeholder="Your description" (change)="onChangeInputDescription($event)">{{modalDescriptionInput}}</textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger my-2 my-sm-0" type="button" (click)="modalService.hide()">Close</button>&nbsp;
+      <button *ngIf="type_modal == 'add'" class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="onSave(true)">Save</button>
+      <button *ngIf="type_modal == 'edit'" class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="onSave(false)">Edit</button>
+    </div>
+  </ng-template>
+</div>

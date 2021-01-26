@@ -1,0 +1,7 @@
+// Here you can add other styles
+body {
+  background-color: #eaeaea57 !important;
+}
+body > app-dashboard > app-header > button:nth-child(6) {
+  visibility: hidden !important;
+}

@@ -1,0 +1,12 @@
+.spanReject > i {
+  color: var(--danger);
+  cursor: pointer;
+}
+.form-search {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0 5px 0;
+  input, select, button {
+    padding: 3px 3px 3px 3px;
+  }
+}
