@@ -75,15 +75,16 @@ export class AllTicketComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>, type: string, ticketId = '') {
-    this.ticketIdSelect = ticketId;
     this.type_modal = type;
     console.log(ticketId);
-    this.indexSelect = this.listDataFilter2[this.currentPage - 1].findIndex(item => item.ticketId === ticketId);
-    this.modalTicketInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].ticketName;
-    this.modalStreamInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].productStream;
-    this.modalDescriptionInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].desc;
+    if (type === 'edit') {
+      this.ticketIdSelect = ticketId;
+      this.indexSelect = this.listDataFilter2[this.currentPage - 1].findIndex(item => item.ticketId === ticketId);
+      this.modalTicketInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].ticketName;
+      this.modalStreamInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].productStream;
+      this.modalDescriptionInput = this.listDataFilter2[this.currentPage - 1][this.indexSelect].desc;
+    }
     this.modalRef = this.modalService.show(template);
-    console.log(this.listDataFilter2[this.currentPage - 1][this.indexSelect]);
   }
 
   paginate(arr, size) {
